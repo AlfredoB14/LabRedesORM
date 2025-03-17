@@ -22,12 +22,17 @@ BASE_URL = '/api/'
 class SensorData (db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sensor_id = db.Column(db.Integer, nullable=False)
-    value = db.Column(db.Float, nullable=False)
+    soundValue = db.Column(db.Float, nullable=False)
+    temperatureValue = db.Column(db.Float, nullable=False)
+    humidityValue = db.Column(db.Float, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, sensor_id, value):
+    def __init__(self, sensor_id, soundValue, temperatureValue, humidityValue):
         self.sensor_id = sensor_id
-        self.value = value
+        self.soundValue = soundValue
+        self.temperatureValue = temperatureValue
+        self.humidityValue = humidityValue
+        
         self.date = datetime.now()
 
     def __repr__(self):
@@ -47,12 +52,14 @@ def post_sensor_data():
     data = request.json
 
     sensor_id = data.get('sensor_id')
-    value = data.get('value')
+    soundValue = data.get('soundValue')
+    temperatureValue = data.get('temperatureValue')
+    humidityValue = data.get('humidityValue')
 
-    if sensor_id is None or value is None:
+    if sensor_id is None or soundValue is None or temperatureValue is None or humidityValue is None:
         abort(400)
 
-    sensor_data = SensorData(sensor_id, value)
+    sensor_data = SensorData(sensor_id, soundValue, temperatureValue, humidityValue)
     db.session.add(sensor_data)
     db.session.commit()
 
@@ -67,7 +74,9 @@ def get_sensor_data(sensor_id):
 
     return jsonify({
         'sensor_id': sensor_data.sensor_id,
-        'value': sensor_data.value,
+        'soundValue': sensor_data.soundValue,
+        'temperatureValue': sensor_data.temperatureValue,
+        'humidityValue': sensor_data.humidityValue,
         'date': sensor_data.date
     })
 
