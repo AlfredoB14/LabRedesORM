@@ -80,6 +80,22 @@ def get_sensor_data(sensor_id):
         'date': sensor_data.date
     })
 
+#Get Sensor History
+@app.route(BASE_URL + 'sensordata/history/<int:sensor_id>', methods=['GET'])
+def get_sensor_data_history(sensor_id):
+    sensor_data = SensorData.query.filter_by(sensor_id=sensor_id).order_by(SensorData.date.desc()).all()
+
+    if sensor_data is None:
+        abort(404)
+
+    return jsonify([{
+        'sensor_id': data.sensor_id,
+        'soundValue': data.soundValue,
+        'temperatureValue': data.temperatureValue,
+        'humidityValue': data.humidityValue,
+        'date': data.date
+    } for data in sensor_data])
+
 # Fin de Rutas
 
 if __name__ == '__main__':
